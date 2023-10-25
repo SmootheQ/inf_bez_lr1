@@ -1,14 +1,15 @@
 from tkinter import *
 from tkinter import messagebox, ttk
-from fun.login import login
 import pickle
 import uuid
 import re
 
-def registration ():
+
+def registration (root):
+     root.withdraw()
 
      root_reg = Tk()
-     root_reg.geometry("450x500")
+     root_reg.geometry("450x520")
      root_reg.title('Регистрация')
      bg_color = "#6A5ACD"
      label_color = "#000000"
@@ -36,6 +37,7 @@ def registration ():
      registr_password_2 = Entry(root_reg, show ='*', font=font_style2)
      reg_uuid = uuid.getnode()
      button_registr = Button(root_reg, text = 'Зарегестрироваться', command=lambda: save(), font=font_style, bg=button_color)
+     button_exit = Button(root_reg, text = 'Вернуться в меню', command=lambda: exit(), font=font_style, bg=button_color)
 
      text.pack()
 
@@ -58,6 +60,7 @@ def registration ():
      text_password_2.pack()
      registr_password_2.pack()
      button_registr.pack(pady=15)
+     button_exit.pack()
      
 
 
@@ -87,6 +90,11 @@ def registration ():
           else:
                return False
 
+     def exit():
+          root_reg.destroy()
+          root.deiconify()
+          return
+
      def save():
           with open('login_main.txt', 'rb') as f:
                try:
@@ -99,6 +107,9 @@ def registration ():
                return
           if registr_number.get() == '':
                messagebox.showerror("Ошибка", "Введите номер телефона", parent=root_reg)
+               return
+          if not registr_number.get().isdigit():
+               messagebox.showerror("Ошибка", "Проверьте корректность номера телефона", parent=root_reg)
                return
           if registr_address.get() == '':
                messagebox.showerror("Ошибка", "Введите адрес", parent=root_reg)
@@ -129,7 +140,7 @@ def registration ():
 
 
           reg_uuid = generate_unique_uuid()
-          print (reg_uuid)
+          #print (reg_uuid)
 
 
 
@@ -143,17 +154,20 @@ def registration ():
           else:
                login_pass_save = existing_data
                login_pass_save[registr_login.get()] = {'password': registr_password_1.get(),'name': registr_name.get(), 'uuid' : reg_uuid, 'number' : registr_number.get() , 'address': registr_address.get()}
-               print (login_pass_save)
+               #print (login_pass_save)
                f = open('login_main.txt', 'wb')
                pickle.dump(login_pass_save, f)
                f.close()
                with open('login_main.txt', 'r', encoding='latin-1') as file:
                     content = file.read()
-                    print(content)
+                    #print(content)
 
                messagebox.showinfo('Поздравляем!', 'Регистрация Успешна')
 
                root_reg.destroy()
+               root.deiconify()
+               
+
 
 
      root_reg.mainloop()

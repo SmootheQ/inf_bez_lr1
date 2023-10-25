@@ -1,0 +1,30 @@
+def compare_uuids():
+    filename = 'uuid.txt'
+    
+    if not os.path.exists(filename):
+        with open(filename, 'wb') as file:
+            user_uuid = subprocess.run('wmic csproduct get UUID/value',  text=True)
+            pickle.dump(user_uuid, file)
+            uuid_main = user_uuid
+    else:
+        with open(filename, 'rb') as file:
+            try:
+                uuid_main = pickle.load(file)
+            except (pickle.UnpicklingError, EOFError):
+                user_uuid = uuid.getnode()
+                file.seek(0)
+                pickle.dump(user_uuid, file)
+                uuid_main = user_uuid
+
+    f = open('uuid.txt', 'wb')
+    pickle.dump(uuid_main, f)
+    f.close()
+
+    uuid_1 = subprocess.run('wmic csproduct get UUID/value',   text=True)
+    uuid_1 = uuid_1.split('\n')
+
+    print(uuid_1 ,uuid_main)
+    if uuid_1 != uuid_main:
+        print(uuid)
+        messagebox.showerror('Ошибка','Ваш UUID не соответствует стандартному, убедитесь, что устройство является основным и повторите попытку.')
+        sys.exit()
