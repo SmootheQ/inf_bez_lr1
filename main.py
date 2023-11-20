@@ -43,7 +43,7 @@ def compare_uuids(filename):
 
 
 compare_uuids('uuid.txt')
-login()
+login(root)
 
 
 button_frame = Frame(bg=bg_color)

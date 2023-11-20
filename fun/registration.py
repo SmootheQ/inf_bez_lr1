@@ -3,6 +3,7 @@ from tkinter import messagebox, ttk
 import pickle
 import uuid
 import re
+import hashlib
 
 
 def registration (root):
@@ -37,7 +38,7 @@ def registration (root):
      registr_password_2 = Entry(root_reg, show ='*', font=font_style2)
      reg_uuid = uuid.getnode()
      button_registr = Button(root_reg, text = 'Зарегестрироваться', command=lambda: save(), font=font_style, bg=button_color)
-     button_exit = Button(root_reg, text = 'Вернуться в меню', command=lambda: exit(), font=font_style, bg=button_color)
+     button_exit = Button(root_reg, text = 'Вернуться  в меню', command=lambda: exit(), font=font_style, bg=button_color)
 
      text.pack()
 
@@ -144,6 +145,8 @@ def registration (root):
 
 
 
+
+
           if not validate_email (registr_login.get()):
                messagebox.showerror("Ошибка","Логин введен некорректно", parent=root_reg)
                return
@@ -152,15 +155,16 @@ def registration (root):
                messagebox.showerror("Ошибка", "Логин уже занят", parent=root_reg)
                return
           else:
+               password = hashlib.sha256((registr_password_1.get() ).encode()).hexdigest()
                login_pass_save = existing_data
-               login_pass_save[registr_login.get()] = {'password': registr_password_1.get(),'name': registr_name.get(), 'uuid' : reg_uuid, 'number' : registr_number.get() , 'address': registr_address.get()}
-               #print (login_pass_save)
+               login_pass_save[registr_login.get()] = {'password': password,'name': registr_name.get(), 'uuid' : reg_uuid, 'number' : registr_number.get() , 'address': registr_address.get(), 'role' : 'user' }
+               print (login_pass_save)
                f = open('login_main.txt', 'wb')
                pickle.dump(login_pass_save, f)
                f.close()
                with open('login_main.txt', 'r', encoding='latin-1') as file:
                     content = file.read()
-                    #print(content)
+                    print(content)
 
                messagebox.showinfo('Поздравляем!', 'Регистрация Успешна')
 
